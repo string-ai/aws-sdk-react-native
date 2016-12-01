@@ -43,9 +43,9 @@ export default class AWSCognitoCredentials{
     this.RNC_TWITTER_PROVIDER = "TwitterProvider"
     this.RNC_COGNITO_PROVIDER = "CognitoProvider"
 
-    //set up delegate for IdentityProvider
+    //set up delegate for IdentityProvider .
     if (Platform.OS === 'ios'){
-      listener.addListener("LoginsRequestedEvent", async {callbackId} => {
+      listener.addListener("LoginsRequestedEvent", async ({callbackId}) => {
         const logins = [await Promise.resolve(this.getLogins())];
         cognitoClient.sendCallbackResponse(callbackId, logins);
       });
