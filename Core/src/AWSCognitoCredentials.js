@@ -52,13 +52,13 @@ export default class AWSCognitoCredentials{
     }
     //Set up Notifications for Identity Changes
     listener.addListener("IdentityChange", async event => {
-      if (!event.Previous){
-        event.Previous = ""
+      if (!event.Previous) {
+        event.Previous = "";
       }
-      if (!event.Current){
-        event.Current = ""
+      if (!event.Current) {
+        event.Current = "";
       }
-      this.identityChanged(event.Previous,event.Current)
+      this.identityChanged(event.Previous, event.Current);
     });
   }
 /*
@@ -226,10 +226,10 @@ initWithOptions(options){
   if(!options.region){
     return "Error: No region";
   }
-  cognitoClient.initWithOptions(options)
+  cognitoClient.initWithOptions(options);
   if (Platform.OS == 'android'){
     if (typeof(this.getLogins()) == "object"){
-      cognitoClient.setLogins(this.getLogins())
+      cognitoClient.setLogins(this.getLogins());
     }
   }
  }

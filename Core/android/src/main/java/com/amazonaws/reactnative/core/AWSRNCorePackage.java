@@ -14,6 +14,7 @@
 //
 package com.amazonaws.reactnative.core;
 
+import com.amazonaws.reactnative.cognito.AWSRNCognitoUser;
 import com.facebook.react.ReactPackage;
 import com.facebook.react.bridge.JavaScriptModule;
 import com.facebook.react.bridge.NativeModule;
@@ -37,8 +38,11 @@ public class AWSRNCorePackage implements ReactPackage {
 
     @Override
     public List<NativeModule> createNativeModules(ReactApplicationContext reactContext) {
+        AWSRNCognitoCredentials awsrnCognitoCredentials = new AWSRNCognitoCredentials(reactContext);
+
         List<NativeModule> modules = new ArrayList<>();
-        modules.add(new AWSRNCognitoCredentials(reactContext));
+        modules.add(awsrnCognitoCredentials);
+        modules.add(new AWSRNCognitoUser(reactContext, awsrnCognitoCredentials));
         return modules;
     }
 

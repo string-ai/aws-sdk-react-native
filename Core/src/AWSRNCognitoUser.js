@@ -6,12 +6,12 @@ import {
   DeviceEventEmitter
 } from 'react-native';
 
-const nativeModule = NativeModules.AWSRNCognitoIdentityUserPool;
+const nativeModule = NativeModules.AWSRNCognitoUser;
 const listener = (Platform.OS === 'ios') ? NativeAppEventEmitter : DeviceEventEmitter;
 
-export default class AWSCognitoIdentityUserPool{
+export default class AWSRNCognitoUser{
  /*
-  * Represents a AWSCognitoIdentityUserPool class
+  * Represents a AWSRNCognitoUser class
   * @constructor
   */
   constructor(){
@@ -21,9 +21,8 @@ export default class AWSCognitoIdentityUserPool{
   /*
    *
   */
-  async getSession(email, password){
-    nativeModule.getSession(email, password);
-    return true;
+  authenticateUser(email, password){
+    return nativeModule.authenticateUser(email, password);
   }
 
   /*

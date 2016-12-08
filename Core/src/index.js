@@ -13,8 +13,8 @@
 // permissions and limitations under the License.
 //
 import AWSCognitoCredentials from "./AWSCognitoCredentials";
-import AWSCognitoIdentityUserPool from "./AWSCognitoIdentityUserPool";
+import AWSRNCognitoUser from "./AWSRNCognitoUser";
 module.exports = {
 	AWSCognitoCredentials: new AWSCognitoCredentials(),
-	AWSCognitoIdentityUserPool: new AWSCognitoIdentityUserPool()
+	AWSRNCognitoUser: new AWSRNCognitoUser()
 };

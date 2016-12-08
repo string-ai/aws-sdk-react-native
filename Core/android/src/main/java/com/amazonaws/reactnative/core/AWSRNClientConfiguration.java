@@ -17,13 +17,10 @@ package com.amazonaws.reactnative.core;
 import com.amazonaws.ClientConfiguration;
 
 public class AWSRNClientConfiguration extends ClientConfiguration {
-
     private static final String USER_AGENT_STRING = "aws-sdk-react-native";
-    private static final String SDK_VERSION = "0.0.1";
-
+    private static final String SDK_VERSION = "0.0.2";
     public ClientConfiguration withUserAgent(final String userAgent) {
         setUserAgent(USER_AGENT_STRING + "/" + SDK_VERSION + "/" + userAgent);
         return this;
     }
-
 }
