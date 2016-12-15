@@ -212,7 +212,7 @@ public class AWSRNCognitoUser extends ReactContextBaseJavaModule {
 
     @ReactMethod
     public void getUserAttributes(final Promise promise) {
-        if(this.user != null) {
+        if(this.user == null) {
             promise.reject("no_auth", "User not authenticated");
             return;
         }
