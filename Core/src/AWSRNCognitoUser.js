@@ -27,6 +27,17 @@ export default class AWSRNCognitoUser{
 
   /*
    *
+  */
+  getUserAttributes(){
+    return nativeModule.getUserAttributes();
+  }
+
+  signOut(){
+    return nativeModule.signOut();
+  }
+
+  /*
+   *
    */
   initWithOptions(options){
     if(!options.clientId){

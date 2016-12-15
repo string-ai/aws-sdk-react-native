@@ -2,6 +2,7 @@ package com.amazonaws.reactnative.cognito;
 
 import com.amazonaws.mobileconnectors.cognitoidentityprovider.CognitoDevice;
 import com.amazonaws.mobileconnectors.cognitoidentityprovider.CognitoUser;
+import com.amazonaws.mobileconnectors.cognitoidentityprovider.CognitoUserDetails;
 import com.amazonaws.mobileconnectors.cognitoidentityprovider.CognitoUserPool;
 import com.amazonaws.mobileconnectors.cognitoidentityprovider.CognitoUserSession;
 import com.amazonaws.mobileconnectors.cognitoidentityprovider.continuations.AuthenticationContinuation;
@@ -9,6 +10,7 @@ import com.amazonaws.mobileconnectors.cognitoidentityprovider.continuations.Auth
 import com.amazonaws.mobileconnectors.cognitoidentityprovider.continuations.ChallengeContinuation;
 import com.amazonaws.mobileconnectors.cognitoidentityprovider.continuations.MultiFactorAuthenticationContinuation;
 import com.amazonaws.mobileconnectors.cognitoidentityprovider.handlers.AuthenticationHandler;
+import com.amazonaws.mobileconnectors.cognitoidentityprovider.handlers.GetDetailsHandler;
 import com.amazonaws.reactnative.core.AWSRNCognitoCredentials;
 import com.facebook.react.bridge.Arguments;
 import com.facebook.react.bridge.Promise;
@@ -21,6 +23,7 @@ import com.facebook.react.bridge.WritableMap;
 import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 
 public class AWSRNCognitoUser extends ReactContextBaseJavaModule {
@@ -35,6 +38,8 @@ public class AWSRNCognitoUser extends ReactContextBaseJavaModule {
     public static final String OK_VALUE = "ok";
     public static final String ID_TOKEN = "idToken";
     public static final String REFRESH_TOKEN = "refreshToken";
+    public static final String ATTRIBUTES = "attributes";
+    public static final String SETTINGS = "settings";
 
     private final AWSRNCognitoCredentials awsrnCognitoCredentials;
 
@@ -181,12 +186,62 @@ public class AWSRNCognitoUser extends ReactContextBaseJavaModule {
             //TODO: handle validationParameters
             //options.getMap("validationParameters")
 
+            if(userPool.getCurrentUser() != null) {
+                userPool.getCurrentUser().signOut();
+            }
+
             this.authDetails = new AuthenticationDetails(userName, password, new HashMap<String, String>());
             this.user = userPool.getUser(userName);
 
             this.authPromise = promise;
             this.user.getSession(handler);
         }
+    }
+
+    @ReactMethod
+    public void signOut(final Promise promise) {
+        if(userPool.getCurrentUser() != null) {
+            userPool.getCurrentUser().signOut();
+            WritableMap result = Arguments.createMap();
+            result.putString(STATUS, OK_VALUE);
+            promise.resolve(result);
+            return;
+        }
+        promise.reject("invalid_session", "No user logged in.");
+    }
+
+    @ReactMethod
+    public void getUserAttributes(final Promise promise) {
+        if(this.user != null) {
+            promise.reject("no_auth", "User not authenticated");
+            return;
+        }
+        this.user.getDetails(new GetDetailsHandler() {
+            @Override
+            public void onSuccess(CognitoUserDetails cognitoUserDetails) {
+                Map<String, String> attributes = cognitoUserDetails.getAttributes().getAttributes();
+                Map<String, String> settings = cognitoUserDetails.getSettings().getSettings();
+                WritableMap attributesMap = Arguments.createMap();
+                for(Map.Entry<String, String> entry: attributes.entrySet()) {
+                    attributesMap.putString(entry.getKey(), entry.getValue());
+                }
+                WritableMap settingsMap = Arguments.createMap();
+                for(Map.Entry<String, String> entry: settings.entrySet()) {
+                    settingsMap.putString(entry.getKey(), entry.getValue());
+                }
+                WritableMap result = Arguments.createMap();
+                result.putString(STATUS, OK_VALUE);
+                result.putMap(ATTRIBUTES, attributesMap);
+                result.putMap(SETTINGS, settingsMap);
+
+                promise.resolve(result);
+            }
+
+            @Override
+            public void onFailure(Exception e) {
+                promise.reject("Unknown", "Unknown error: ", e);
+            }
+        });
     }
 
 }
